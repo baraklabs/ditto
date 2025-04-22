@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  ditto_db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ditto
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  ditto_api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+
+    depends_on:
+      - ditto_db
+    env_file:
+      - ./.env
+    environment:
+      - DB_HOST=ditto_db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=ditto
+    ports:
+      - "3000:3000"
+
+  ditto_ui:
+    build:
+      context: ./ui
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL} 
+    ports:
+      - "80:80"
+    env_file:
+      - ./.env
+volumes:
+  db-data:

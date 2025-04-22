@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS collection_mock (
+  id SERIAL PRIMARY KEY,
+  collection_id INTEGER NOT NULL REFERENCES collection(id) ON DELETE CASCADE,
+  mock_id INTEGER NOT NULL REFERENCES mock(id) ON DELETE CASCADE,
+  created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (collection_id, mock_id)
+);

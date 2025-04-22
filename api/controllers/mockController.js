@@ -1,0 +1,62 @@
+const MockService = require('../services/mockService');
+
+const getAllMocks = async (req, res) => {
+  try {
+    const mocks = await MockService.listMocks();
+    res.json(mocks);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching mocks', error: err.message });
+  }
+};
+
+const getMockById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const mock = await MockService.getMockById(id);
+    if (!mock) return res.status(404).json({ message: 'Mock not found' });
+    res.json(mock);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching mock', error: err.message });
+  }
+};
+
+const createMock = async (req, res) => {
+  const mockData = req.body;
+  try {
+    const created = await MockService.createMock(mockData);
+    res.status(201).json(created);
+  } catch (err) {
+    res.status(500).json({ message: 'Error creating mock', error: err.message });
+  }
+};
+
+const updateMock = async (req, res) => {
+  const { id } = req.params;
+  const updatedData = req.body;
+  try {
+    const updated = await MockService.updateMock(id, updatedData);
+    if (!updated) return res.status(404).json({ message: 'Mock not found' });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating mock', error: err.message });
+  }
+};
+
+const deleteMock = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await MockService.deleteMock(id);
+    if (!deleted) return res.status(404).json({ message: 'Mock not found' });
+    res.json(deleted);
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting mock', error: err.message });
+  }
+};
+
+module.exports = {
+  getAllMocks,
+  getMockById,
+  createMock,
+  updateMock,
+  deleteMock
+};
