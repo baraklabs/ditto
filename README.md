@@ -97,7 +97,7 @@ If successful, you'll see:
 ## 🗂️ Folder Structure
 
 ```
-mock-inspector/
+Ditto/
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .env
