@@ -1,6 +1,7 @@
 // src/services/collectionService.js
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; 
+import { getApiBaseUrl } from '../utils/getApiBaseUrl';
 
+const API_BASE_URL = getApiBaseUrl();
 export const createCollection = async (name) => {
   const response = await fetch(`${API_BASE_URL}/api/collection`, {
     method: 'POST',
