@@ -10,7 +10,7 @@ done
 export DATABASE_URL="postgres://$DB_USER:$DB_PASSWORD@$DB_HOST:5432/$DB_NAME"
 
 echo "PostgreSQL is up. Running migrations..."
-node runMigrations.js
+node migrateAndSeed.js
 
 echo "Starting server..."
 exec node app.js

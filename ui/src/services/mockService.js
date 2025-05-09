@@ -8,7 +8,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
  * @returns {Promise<Object>} The created mock.
  */
 export const createMock = async (mockData) => {
-  const response = await fetch(`${API_BASE_URL}/api/mock`, {
+  const response = await fetch(`${API_BASE_URL}/api/ditto/mock`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(mockData),
@@ -31,7 +31,7 @@ export const createMock = async (mockData) => {
  * @returns {Promise<Array>} List of mocks.
  */
 export const getMocks = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/mock`);
+  const response = await fetch(`${API_BASE_URL}/api/ditto/mock`);
   if (!response.ok) {
     const errData = await response.json().catch(() => ({}));
     throw new Error(errData.message || 'Failed to fetch mocks');

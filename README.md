@@ -57,7 +57,7 @@ Once up:
 
 - Health check:
   ```bash
-  curl http://localhost:3001/api/health
+  curl http://localhost:3001/api/ditto/health
   ```
 
 If successful, you'll see:
@@ -70,25 +70,25 @@ If successful, you'll see:
 ## 🔧 APIs Available
 
 ### Health Check
-`GET /api/health`
+`GET /api/ditto/health`
 
 ### Collections
-- `GET /api/collections`
-- `GET /api/collections/:id`
-- `POST /api/collections`
-- `PUT /api/collections/:id`
-- `DELETE /api/collections/:id`
+- `GET /api/ditto/collections`
+- `GET /api/ditto/collections/:id`
+- `POST /api/ditto/collections`
+- `PUT /api/ditto/collections/:id`
+- `DELETE /api/ditto/collections/:id`
 
 ### Mocks
-- `GET /api/mocks`
-- `GET /api/mocks/:id`
-- `POST /api/mocks`
-- `PUT /api/mocks/:id`
-- `DELETE /api/mocks/:id`
+- `GET /api/ditto/mocks`
+- `GET /api/ditto/mocks/:id`
+- `POST /api/ditto/mocks`
+- `PUT /api/ditto/mocks/:id`
+- `DELETE /api/ditto/mocks/:id`
 
 ### Request Logs
-- `GET /api/request-response`
-- `DELETE /api/request-response/:id`
+- `GET /api/ditto/request-response`
+- `DELETE /api/ditto/request-response/:id`
 
 ---
 

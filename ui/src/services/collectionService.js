@@ -3,7 +3,7 @@ import { getApiBaseUrl } from '../utils/getApiBaseUrl';
 
 const API_BASE_URL = getApiBaseUrl();
 export const createCollection = async (name) => {
-  const response = await fetch(`${API_BASE_URL}/api/collection`, {
+  const response = await fetch(`${API_BASE_URL}/api/ditto/collection`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ export const createCollection = async (name) => {
 };
 
 export const getCollections = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/collection`);
+  const response = await fetch(`${API_BASE_URL}/api/ditto/collection`);
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Failed to fetch collections');
@@ -32,7 +32,7 @@ export const getCollections = async () => {
   return response.json();
 };
 export const getCollectionsMocks = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/collection/mock`);
+  const response = await fetch(`${API_BASE_URL}/api/ditto/collection/mock`);
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Failed to fetch collections');
