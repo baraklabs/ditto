@@ -1,8 +1,11 @@
 const pool = require('../db');
 
 const MockModel = {
-  async getAll() {
-    const result = await pool.query('SELECT * FROM mock ORDER BY id');
+  async getAll(userId) {
+    const result = await pool.query(
+      'SELECT * FROM mock WHERE user_id = $1 ORDER BY id',
+      [userId]
+    );
     return result.rows;
   },
 
@@ -10,8 +13,7 @@ const MockModel = {
     const result = await pool.query('SELECT * FROM mock WHERE id = $1', [id]);
     return result.rows[0];
   },
-  async create(data) {
-    console.log("Input data "+JSON.stringify(data))
+  async create(data, userId) {
     const result = await pool.query(
       `INSERT INTO mock (
         name, 
@@ -26,9 +28,10 @@ const MockModel = {
         res_delay_ms, 
         cookies, 
         mock_type, 
-        priority
+        priority,
+        user_id
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
       ) RETURNING *`,
       [
         data.name,
@@ -37,17 +40,19 @@ const MockModel = {
         data.requestHeader || null,
         data.requestBody || null,
         data.requestQueryParam || null,
-         data.responseStatus || null,
+        data.responseStatus || null,
         data.responseHeader || null,
         data.responseBody || null,
         data.responseDelayMs || null,
         data.cookies || null,
         data.mockType || null,
-         data.priority || null
+        data.priority || null,
+        userId
       ]
     );
     return result.rows[0];
-  },  
+  }
+  ,
   async update(id, data) {
     const result = await pool.query(
       `UPDATE mock SET
@@ -84,7 +89,7 @@ const MockModel = {
         id
       ]
     );
-  
+
     return result.rows[0];
   }
   ,
@@ -95,9 +100,9 @@ const MockModel = {
   }
   ,
   async getMocks(req_method) {
-    
-    const query ='SELECT * FROM mock WHERE req_method = $1';
-    
+
+    const query = 'SELECT * FROM mock WHERE req_method = $1';
+
     const values = [
       req_method
     ];
@@ -110,7 +115,7 @@ const MockModel = {
       throw error;
     }
   }
-  
+
 };
 
 module.exports = MockModel;

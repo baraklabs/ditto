@@ -2,11 +2,15 @@
 import { getApiBaseUrl } from '../utils/getApiBaseUrl';
 
 const API_BASE_URL = getApiBaseUrl();
+const getToken = () => localStorage.getItem('authToken');
+
 export const createCollection = async (name) => {
+  const token = getToken();
   const response = await fetch(`${API_BASE_URL}/api/ditto/collection`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ name }),
   });
@@ -24,15 +28,28 @@ export const createCollection = async (name) => {
 };
 
 export const getCollections = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/ditto/collection`);
+  const token = getToken();
+  const response = await fetch(`${API_BASE_URL}/api/ditto/collection`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Failed to fetch collections');
   }
   return response.json();
 };
+
 export const getCollectionsMocks = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/ditto/collection/mock`);
+  const token = getToken();
+  const response = await fetch(`${API_BASE_URL}/api/ditto/collection/mock`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Failed to fetch collections');

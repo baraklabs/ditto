@@ -1,8 +1,9 @@
 const CollectionService = require('../services/collectionService');
 
 const getAllCollections = async (req, res) => {
+  let userId= req.user.userId
   try {
-    const collections = await CollectionService.listCollections();
+    const collections = await CollectionService.listCollectionsByUserId(userId);
     res.json(collections);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching collections', error: err.message });
@@ -10,7 +11,9 @@ const getAllCollections = async (req, res) => {
 };
 const getAllCollectionsWithMocks = async (req, res) => {
   try {
-    const collections = await CollectionService.listCollectionsWithMocks();
+    let userId= req.user.userId
+
+    const collections = await CollectionService.listCollectionsWithMocks(userId);
     res.json(collections);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching collections', error: err.message });
@@ -29,13 +32,15 @@ const getCollectionById = async (req, res) => {
 };
 
 const createCollection = async (req, res) => {
+  let userId= req.user.userId
+
   const collectionData = req.body;
   if (!collectionData.name || collectionData.name.trim() === '') {
     return res.status(400).json({ message: 'Collection name is required and cannot be empty' });
   }
 
   try {
-    const created = await CollectionService.createCollection(collectionData);
+    const created = await CollectionService.createCollection(collectionData,userId);
     res.status(201).json(created);
   } catch (err) {
     res.status(500).json({ message: 'Error creating collection', error: err.message });

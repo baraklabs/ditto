@@ -28,7 +28,7 @@ export const createUser = async (form) => {
 export const getUsers = async () => {
   const token = getToken();
   try {
-    const res = await fetch(`${API_BASE_URL}/api/ditto/user/profile`, {
+    const res = await fetch(`${API_BASE_URL}/api/ditto/user/profile/all`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

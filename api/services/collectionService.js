@@ -11,8 +11,9 @@ function parseText(val) {
 }
 const CollectionService = {
   listCollections: () => CollectionModel.getAll(),
-  listCollectionsWithMocks: async () => {
-    const allCollections = await CollectionModel.getAllCollectionsMocks();
+  listCollectionsByUserId: (userId) => CollectionModel.getAllByUserId(userId),
+  listCollectionsWithMocks: async (userId) => {
+    const allCollections = await CollectionModel.getAllCollectionsMocks(userId);
     const transformed = allCollections.map(collection => {
       const transformedMocks = collection.mocks.map(mock => ({
         id: mock.id,
@@ -44,7 +45,7 @@ const CollectionService = {
   }
   ,
   getCollectionById: (id) => CollectionModel.getById(id),
-  createCollection: (data) => CollectionModel.create(data),
+  createCollection: (data, userId) => CollectionModel.create(data, userId),
   updateCollection: (id, data) => CollectionModel.update(id, data),
   deleteCollection: (id) => CollectionModel.remove(id)
 };

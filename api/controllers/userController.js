@@ -1,7 +1,6 @@
 const userService = require('../services/userService');
 
-// Controller for getting user profile
-exports.getUserProfile = async (req, res) => {
+exports.getAllUserProfile = async (req, res) => {
   const admin = req.user;
 
   if (!admin || admin.role !== 'admin') {
@@ -10,6 +9,16 @@ exports.getUserProfile = async (req, res) => {
 
   try {
     const users = await userService.getAllUsers();
+    res.status(200).json({ success: true, data: users });
+  } catch (err) {
+    console.error('Error fetching users:', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+exports.getUserProfile = async (req, res) => {
+
+  try {
+    const users = await userService.getUser(req.user.userId);
     res.status(200).json({ success: true, data: users });
   } catch (err) {
     console.error('Error fetching users:', err);
