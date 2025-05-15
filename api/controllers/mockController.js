@@ -2,7 +2,9 @@ const MockService = require('../services/mockService');
 
 const getAllMocks = async (req, res) => {
   try {
-    const mocks = await MockService.listMocks();
+    let userId= req.user.userId
+
+    const mocks = await MockService.listMocks(userId);
     res.json(mocks);
   } catch (err) {
     res.status(500).json({ message: 'Error fetching mocks', error: err.message });
@@ -22,11 +24,13 @@ const getMockById = async (req, res) => {
 
 const createMock = async (req, res) => {
   const mockData = req.body;
+  let userId= req.user.userId
   try {
-    const created = await MockService.createMock(mockData);
+    const created = await MockService.createMock(mockData, userId);
     res.status(201).json(created);
   } catch (err) {
-    res.status(500).json({ message: 'Error creating mock', error: err.message });
+    console.log("Error creating mock",err);
+    res.status(500).json({ message: 'Error creating mock' });
   }
 };
 

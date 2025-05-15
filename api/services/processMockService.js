@@ -1,4 +1,5 @@
 const MockModel = require('../models/mockModel');
+const { callProxyHost } = require('../services/proxyService');
 
 const extractRequestDetails = (req) => {
     return {
@@ -31,34 +32,34 @@ const normalizeRequestData = (data) => {
 };
 function filterAllMatching(savedMocks, reqReceived) {
     const parseSafely = (input) => {
-      if (input === null || input === undefined || input === "") return null;
-      try {
-        return JSON.parse(input);
-      } catch {
-        return input; // return original string if not valid JSON
-      }
+        if (input === null || input === undefined || input === "") return null;
+        try {
+            return JSON.parse(input);
+        } catch {
+            return input; // return original string if not valid JSON
+        }
     };
-  
+
     const reqBodyParsed = parseSafely(reqReceived.req_body);
     const reqQueryParsed = parseSafely(reqReceived.req_query_params);
-  
+
     return savedMocks.filter((mock) => {
-      const mockBodyParsed = parseSafely(mock.req_body);
-      const mockQueryParsed = parseSafely(mock.req_query_params);
-      return (
-        mock.req_method === reqReceived.req_method &&
-        mock.req_path_param === reqReceived.req_path_param &&
-        JSON.stringify(mockBodyParsed) === JSON.stringify(reqBodyParsed) &&
-        JSON.stringify(mockQueryParsed) === JSON.stringify(reqQueryParsed)
-      );
+        const mockBodyParsed = parseSafely(mock.req_body);
+        const mockQueryParsed = parseSafely(mock.req_query_params);
+        return (
+            mock.req_method === reqReceived.req_method &&
+            mock.req_path_param === reqReceived.req_path_param &&
+            JSON.stringify(mockBodyParsed) === JSON.stringify(reqBodyParsed) &&
+            JSON.stringify(mockQueryParsed) === JSON.stringify(reqQueryParsed)
+        );
     });
-  }
-  
+}
+
 function getHighestPriorityMock(matchingMocks) {
     const sorted = matchingMocks
         .sort((a, b) => {
-            const aPriority = a.priority ?? -Infinity; 
-            const bPriority = b.priority ?? -Infinity; 
+            const aPriority = a.priority ?? -Infinity;
+            const bPriority = b.priority ?? -Infinity;
 
             // Compare priorities first (higher priority number wins)
             if (aPriority !== bPriority) {
@@ -66,7 +67,7 @@ function getHighestPriorityMock(matchingMocks) {
             }
 
             // If priorities are the same, use the latest updated time
-            return new Date(b.updated_at) - new Date(a.updated_at); 
+            return new Date(b.updated_at) - new Date(a.updated_at);
         });
     return sorted;
 }
@@ -75,9 +76,7 @@ const ProcessMockService = {
         try {
             const rawData = extractRequestDetails(req);
             const filters = normalizeRequestData(rawData);
-            console.log("FIlters " + JSON.stringify(filters))
             const allSavedMocks = await MockModel.getMocks(filters.req_method);
-            console.log("allSavedMocks " + JSON.stringify(allSavedMocks))
             if (!allSavedMocks || allSavedMocks.length === 0) {
                 return res.status(404).json({ message: "No matching mock found" });
             }
@@ -91,6 +90,10 @@ const ProcessMockService = {
             const sorted = getHighestPriorityMock(matchingMocks);
 
             const selected = sorted[0];
+            if (selected.mock_type === 'Forward') {
+                const proxyRes = await callProxyHost(selected);
+                res.status(proxyRes.status).set(proxyRes.headers).send(proxyRes.data);
+            }
             const delay = selected.res_delay_ms || 0;
             const status = selected.res_status || 200;
             const headers = selected.res_header ? JSON.parse(selected.res_header) : {};

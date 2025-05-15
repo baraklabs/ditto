@@ -5,7 +5,7 @@ const CollectionModel = {
     const result = await pool.query('SELECT * FROM collection ORDER BY id');
     return result.rows;
   },
-  async getAllCollectionsMocks() {
+  async getAllCollectionsMocks(userId) {
     const result = await pool.query(`
       SELECT 
         c.id AS collection_id,
@@ -14,8 +14,9 @@ const CollectionModel = {
       FROM collection c
       LEFT JOIN collection_mock cm ON cm.collection_id = c.id
       LEFT JOIN mock m ON m.id = cm.mock_id
+      WHERE c.user_id = $1
       ORDER BY c.id, m.id
-    `);
+    `, [userId]);
 
     const grouped = result.rows.reduce((acc, row) => {
       const { collection_id, collection_name, ...mockData } = row;
@@ -36,23 +37,20 @@ const CollectionModel = {
     }, {});
 
     return Object.values(grouped);
-  }
-
-  ,
+  },
 
   async getById(id) {
     const result = await pool.query('SELECT * FROM collection WHERE id = $1', [id]);
     return result.rows[0];
   },
 
-  async create(data) {
-    console.log("data  " + JSON.stringify(data))
+  async create(data, userId) {
     const result = await pool.query(
-      'INSERT INTO collection (name) VALUES ($1) RETURNING *',
-      [data.name]
+      'INSERT INTO collection (name, user_id) VALUES ($1, $2) RETURNING *',
+      [data.name, userId]
     );
     return result.rows[0];
-  },
+  },  
 
   async update(id, data) {
     const result = await pool.query(
@@ -65,7 +63,15 @@ const CollectionModel = {
   async remove(id) {
     const result = await pool.query('DELETE FROM collection WHERE id = $1 RETURNING *', [id]);
     return result.rows[0];
+  },
+  async getAllByUserId(userId) {
+    const result = await pool.query(
+      'SELECT * FROM collection WHERE user_id = $1 ORDER BY created_on DESC',
+      [userId]
+    );
+    return result.rows;
   }
+
 };
 
 module.exports = CollectionModel;
