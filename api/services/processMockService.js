@@ -92,7 +92,7 @@ const ProcessMockService = {
             const selected = sorted[0];
             if (selected.mock_type === 'Forward') {
                 const proxyRes = await callProxyHost(selected);
-                res.status(proxyRes.status).set(proxyRes.headers).send(proxyRes.data);
+                return res.status(proxyRes.status).set(proxyRes.headers).send(proxyRes.data);
             }
             const delay = selected.res_delay_ms || 0;
             const status = selected.res_status || 200;
