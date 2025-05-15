@@ -13,48 +13,52 @@ const MockModel = {
     const result = await pool.query('SELECT * FROM mock WHERE id = $1', [id]);
     return result.rows[0];
   },
-  async create(data, userId) {
-    const result = await pool.query(
-      `INSERT INTO mock (
-    name, 
-    req_path_param, 
-    req_method, 
-    req_header, 
-    req_body, 
-    req_query_params, 
-    res_status, 
-    res_header, 
-    res_body, 
-    res_delay_ms, 
-    cookies, 
-    mock_type, 
-    priority,
-    user_id
-  ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
-  ) RETURNING *`,
-      [
-        data?.name ?? null,
-        data?.pathParam ?? null,
-        data?.method ?? 'GET',
-        data?.requestHeader ?? null,
-        data?.requestBody ?? null,
-        data?.requestQueryParam ?? null,
-        Number.isInteger(+data?.responseStatus) ? +data.responseStatus : null,
-        data?.responseHeader ?? null,
-        data?.responseBody ?? null,
-        Number.isInteger(+data?.responseDelayMs) ? +data.responseDelayMs : null,
-        data?.cookies ?? null,
-        data?.mockType ?? null,
-        Number.isInteger(+data?.priority) ? +data.priority : null,
-        userId
-      ]
-    );
+ async create(data, userId) {
+  const result = await pool.query(
+    `INSERT INTO mock (
+      name, 
+      req_path_param, 
+      req_method, 
+      req_header, 
+      req_body, 
+      req_query_params, 
+      res_status, 
+      res_header, 
+      res_body, 
+      res_delay_ms, 
+      cookies, 
+      mock_type, 
+      priority,
+      user_id,
+      host,
+      port,
+      schema
+    ) VALUES (
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17
+    ) RETURNING *`,
+    [
+      data?.name ?? null,
+      data?.pathParam ?? null,
+      data?.method ?? 'GET',
+      data?.requestHeader ?? null,
+      data?.requestBody ?? null,
+      data?.requestQueryParam ?? null,
+      Number.isInteger(+data?.responseStatus) ? +data.responseStatus : null,
+      data?.responseHeader ?? null,
+      data?.responseBody ?? null,
+      Number.isInteger(+data?.responseDelayMs) ? +data.responseDelayMs : null,
+      data?.cookies ?? null,
+      data?.mockType ?? null,
+      Number.isInteger(+data?.priority) ? +data.priority : null,
+      userId,
+      data?.host ?? null,
+      Number.isInteger(+data?.port) ? +data.port : null,
+      data?.schema ?? null
+    ]
+  );
+  return result.rows[0];
+}
 
-
-
-    return result.rows[0];
-  }
   ,
   async update(id, data) {
     const result = await pool.query(
