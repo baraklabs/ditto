@@ -29,7 +29,8 @@ const createMock = async (req, res) => {
     const created = await MockService.createMock(mockData, userId);
     res.status(201).json(created);
   } catch (err) {
-    res.status(500).json({ message: 'Error creating mock', error: err.message });
+    console.log("Error creating mock",err);
+    res.status(500).json({ message: 'Error creating mock' });
   }
 };
 

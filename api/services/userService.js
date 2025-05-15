@@ -10,5 +10,5 @@ exports.getAllUsers = async () => {
   return await userModel.getAllUsers();
 };
 exports.getUser = async (userId) => {
-  return await userModel.getUserProfile();
+  return await userModel.getUserProfile(userId);
 };

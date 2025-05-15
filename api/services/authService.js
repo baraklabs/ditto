@@ -5,7 +5,6 @@ const { findUserByEmail } = require('../models/userModel');
 exports.login = async ({ email_id, password }) => {
   const isGuest = email_id === process.env.VITE_GUEST_USER_EMAIL_ID;
   const isAdmin = email_id === process.env.ADMIN_USER_EMAIL_ID;
-
   if (!email_id || (!isGuest && !password)) {
     return { status: 400, payload: 'Email and password are required' };
   }

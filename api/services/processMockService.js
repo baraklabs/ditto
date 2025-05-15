@@ -75,9 +75,7 @@ const ProcessMockService = {
         try {
             const rawData = extractRequestDetails(req);
             const filters = normalizeRequestData(rawData);
-            console.log("FIlters " + JSON.stringify(filters))
             const allSavedMocks = await MockModel.getMocks(filters.req_method);
-            console.log("allSavedMocks " + JSON.stringify(allSavedMocks))
             if (!allSavedMocks || allSavedMocks.length === 0) {
                 return res.status(404).json({ message: "No matching mock found" });
             }

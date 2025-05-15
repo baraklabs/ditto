@@ -25,6 +25,6 @@ exports.getAllUsers = async () => {
   return result.rows;
 };
 exports.getUserProfile = async (userId) => {
-  const result = await pool.query('SELECT id, first_name, last_name, email_id, verified FROM users WHERE id = $1', [userId]);
+  const result = await pool.query('SELECT id, first_name, last_name, email_id, active FROM users WHERE id = $1', [userId]);
   return result.rows[0];  // Returns the user profile excluding sensitive data
 };

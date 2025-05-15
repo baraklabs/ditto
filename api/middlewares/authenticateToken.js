@@ -1,21 +1,21 @@
 const jwtUtils = require('../utils/jwt');
 const { findUserByEmail } = require('../models/userModel');
 
-module.exports = (req, res, next) => {
-  if(!process.env.VITE_ENABLE_LOGIN){
-    const user = findUserByEmail(process.env.VITE_GUEST_USER_EMAIL_ID);
+module.exports = async (req, res, next) => {
+  if (!process.env.VITE_ENABLE_LOGIN || process.env.VITE_ENABLE_LOGIN == 'false') {
+    const user = await findUserByEmail(process.env.VITE_GUEST_USER_EMAIL_ID);
     req.user = { userId: user.id, email: user.email_id };
-    next();
+    return next();
   }
   const authHeader = req.headers['authorization'];
 
   const token = authHeader && authHeader.split(' ')[1];
-  
+
   if (!token) return res.status(401).json({ message: 'Missing token' });
 
 
   try {
-    const user = jwtUtils.verify(token); 
+    const user = jwtUtils.verify(token);
     req.user = user;
     next();
   } catch (err) {

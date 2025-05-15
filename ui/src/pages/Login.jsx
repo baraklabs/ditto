@@ -1,23 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';  // Import the AuthContext
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { loginUser } from '../services/auth';
 
-const Home = () => {
+const Login = () => {
+const { user, setUser } = useAuth();
   const [message, setMessage] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (user) {
+      // If the user is logged in, redirect to /mock
+      navigate('/mock', { replace: true });
+    }
+  }, [user, navigate]);  // Ensure navigation happens when user state changes
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
     const result = await loginUser(username, password);
-
     if (result.success) {
-      navigate('/mock');
+      setUser(result.user);
+      navigate('/mock', { replace: true });
     } else {
       setMessage(result.message || 'Invalid credentials');
     }
@@ -30,7 +39,7 @@ const Home = () => {
         <div className="text-center mb-12">
           <h1 className="text-5xl font-extrabold mb-4 drop-shadow-lg">Welcome to Ditto</h1>
           <p className="text-xl drop-shadow-md max-w-xl mx-auto">
-            Create mocks, test, and debug  APIs instantly — powerful, collaborative, and built for developers.
+            Create mocks, test, and debug APIs instantly — powerful, collaborative, and built for developers.
           </p>
         </div>
 
@@ -62,4 +71,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Login;

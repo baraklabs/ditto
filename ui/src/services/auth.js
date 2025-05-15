@@ -1,6 +1,7 @@
 import { getApiBaseUrl } from '../utils/getApiBaseUrl';
 
 const API_BASE_URL = getApiBaseUrl();
+const getToken = () => localStorage.getItem('authToken');
 
 export const isUserLoggedIn = () => {
   return !!localStorage.getItem('authToken');
@@ -22,7 +23,7 @@ export const getLoggedInUser = () => {
 
 export const loginUser = async (email_id, password) => {
   try {
-    const ENABLE_LOGIN = import.meta.env.VITE_ENABLE_LOGIN === 'true';
+    const ENABLE_LOGIN = import.meta.env.VITE_ENABLE_LOGIN == 'true';
     const GUEST_USER_EMAIL = import.meta.env.VITE_GUEST_USER_EMAIL_ID;
 
     // If login is disabled, automatically log in with the guest user
@@ -44,7 +45,7 @@ export const loginUser = async (email_id, password) => {
       // Set user and token in localStorage
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      return { success: true };
+      return { success: true, user: data.user };
     } else {
       return { success: false, message: data.message || 'Login failed' };
     }
@@ -55,7 +56,7 @@ export const loginUser = async (email_id, password) => {
 };
 
 // Call the login automatically if VITE_ENABLE_LOGIN is false
-const ENABLE_LOGIN = import.meta.env.VITE_ENABLE_LOGIN === 'false';
+const ENABLE_LOGIN = import.meta.env.VITE_ENABLE_LOGIN == 'false';
 if (ENABLE_LOGIN) {
   const GUEST_USER_EMAIL = import.meta.env.VITE_GUEST_USER_EMAIL_ID;
   loginUser(GUEST_USER_EMAIL).then((response) => {
@@ -78,8 +79,8 @@ export const getUsersProfile = async () => {
     });
 
     const data = await res.json();
-    localStorage.setItem('user', JSON.stringify(data.user));
-
+    localStorage.setItem('user', JSON.stringify(data.data));
+    return data.data;
   } catch (err) {
     return { success: false, message: err.message || 'Network error' };
   }

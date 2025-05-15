@@ -1,16 +1,19 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { isUserLoggedIn, getLoggedInUser } from '../services/auth';
+import { useAuth } from '../contexts/AuthContext';
 
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
-  const isLoggedIn = isUserLoggedIn();
-  const user = getLoggedInUser();
+  const { user, loading } = useAuth();
 
-  if (!isLoggedIn) {
+  if (loading) {
+    return <div>Loading...</div>; // or a spinner component
+  }
+
+  if (!user) {
     return <Navigate to="/" replace />;
   }
 
-  if (requireAdmin && user?.role !== 'admin') {
+  if (requireAdmin && user.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
 

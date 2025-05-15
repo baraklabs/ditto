@@ -1,6 +1,6 @@
-// src/services/mockService.js
+import { getApiBaseUrl } from '../utils/getApiBaseUrl';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = getApiBaseUrl();
 
 const getToken = () => localStorage.getItem('authToken');
 

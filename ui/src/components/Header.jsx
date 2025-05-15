@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
   const user = getLoggedInUser();
-  const enableLogin = import.meta.env.VITE_ENABLE_LOGIN === 'true';
+  const enableLogin = import.meta.env.VITE_ENABLE_LOGIN == 'true';
 
   const handleLogout = () => {
     logout();
