@@ -12,7 +12,7 @@ const App = () => {
 
  
 
-  if (loading) return <div>Loading...</div>; // You could show a spinner here
+  if (loading) return <div>Loading...</div>; 
 
   return (
     <Routes>

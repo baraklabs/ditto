@@ -7,9 +7,8 @@ try {
   console.warn('Invalid SSL config in .env, falling back to false');
   ssl = false;
 }
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgres://postgres:postgres@ditto_db:5432/ditto',
-  ssl,
+  ssl: ssl,
 });
 module.exports = pool; 

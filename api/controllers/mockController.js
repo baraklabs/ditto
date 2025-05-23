@@ -37,9 +37,17 @@ const createMock = async (req, res) => {
 const updateMock = async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
+  const userId = req.user?.userId; // ensure this is populated by auth middleware
+
+  if (!id || !userId) {
+    return res.status(400).json({ message: 'Missing mock ID or user ID' });
+  }
+
   try {
-    const updated = await MockService.updateMock(id, updatedData);
-    if (!updated) return res.status(404).json({ message: 'Mock not found' });
+    const updated = await MockService.updateMock(id, updatedData, userId);
+    if (!updated) {
+      return res.status(404).json({ message: 'Mock not found or access denied' });
+    }
     res.json(updated);
   } catch (err) {
     res.status(500).json({ message: 'Error updating mock', error: err.message });

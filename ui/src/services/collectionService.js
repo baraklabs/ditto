@@ -20,7 +20,7 @@ export const createCollection = async (name) => {
     try {
       const errData = await response.json();
       error = errData.message || error;
-    } catch (e) {}
+    } catch (e) { }
     throw new Error(error);
   }
 
@@ -54,5 +54,23 @@ export const getCollectionsMocks = async () => {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || 'Failed to fetch collections');
   }
+  return response.json();
+};
+export const renameCollection = async (id, newName) => {
+  const token = getToken();
+  const response = await fetch(`${API_BASE_URL}/api/ditto/collection/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ name: newName }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to rename collection');
+  }
+
   return response.json();
 };

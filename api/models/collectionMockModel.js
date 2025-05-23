@@ -55,12 +55,12 @@ const CollectionMockModel = {
     if (colId === null || mId === null) {
       throw new Error('Invalid collectionId or mockId. Both must be integers.');
     }
-  
+
     const result = await pool.query(
       `INSERT INTO collection_mock (collection_id, mock_id) VALUES ($1, $2) RETURNING *`,
       [colId, mId]
     );
-  
+
     return result.rows[0];
   }
   ,
@@ -73,6 +73,15 @@ const CollectionMockModel = {
       [id]
     );
     return result.rows[0];
+  },
+
+  async updateCollectionMock(mockId, newCollectionId) {
+    await pool.query(
+      `UPDATE collection_mock 
+     SET collection_id = $1 
+     WHERE mock_id = $2`,
+      [newCollectionId, mockId]
+    );
   }
 };
 

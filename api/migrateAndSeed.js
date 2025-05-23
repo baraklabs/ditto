@@ -1,11 +1,11 @@
-const fs = require('fs');
 const path = require('path');
-const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
+const fs = require('fs');
+const bcrypt = require('bcrypt');
 const pool = require('./db');
 
 // Load .env from one level up
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 async function runMigrations() {
   const migrationsDir = path.join(__dirname, 'sql');
