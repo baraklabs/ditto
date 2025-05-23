@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { createMock } from '../services/mockService';
+import { createMock, updateMock } from '../services/mockService';
 import MessageBox from './MessageBox';
+import { getApiBaseUrl } from "../utils/getApiBaseUrl";
 
-const MockCreate = ({ collections, selectedMock }) => {
+const MockCreate = ({ collections, selectedMock, refreshCollections, setExpanded }) => {
   const [isFormView, setIsFormView] = useState(true);
   const [name, setName] = useState('');
   const [selectedCollection, setSelectedCollection] = useState('');
   const [method, setMethod] = useState('GET');
   const [pathParam, setPathParam] = useState('');
+  const [queryParam, setQueryParam] = useState('');
   const [responseStatus, setResponseStatus] = useState('');
   const [priority, setPriority] = useState('');
   const [mockType, setMockType] = useState('Default');
@@ -20,6 +22,7 @@ const MockCreate = ({ collections, selectedMock }) => {
   const [schema, setSchema] = useState('http');
   const [freeText, setFreeText] = useState('');
   const [message, setMessage] = useState(null);
+  const [showCurl, setShowCurl] = useState(false);
 
   useEffect(() => {
     if (collections && collections.length > 0) {
@@ -28,6 +31,22 @@ const MockCreate = ({ collections, selectedMock }) => {
       setSelectedCollection('default');
     }
   }, [collections]);
+  const [showCurlPreview, setShowCurlPreview] = useState(false);
+
+  const buildCurlCommand = () => {
+    const baseUrl = getApiBaseUrl(schema, host, port);
+    const fullUrl = `${baseUrl}${pathParam}${queryParam ? `?${queryParam}` : ''}`;
+    const headers = requestHeader
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => `-H "${line.trim()}"`)
+      .join(' ');
+    const bodyPart = method !== 'GET' && requestBody
+      ? `-d '${requestBody}'`
+      : '';
+    return `curl -X ${method} "${fullUrl}" ${headers} ${bodyPart}`.trim();
+  };
+
 
   useEffect(() => {
     if (selectedMock) {
@@ -35,6 +54,7 @@ const MockCreate = ({ collections, selectedMock }) => {
       setSelectedCollection(selectedMock.collectionId || '');
       setMethod(selectedMock.req_method || 'GET');
       setPathParam(selectedMock.req_path_param || '');
+      setQueryParam(selectedMock.req_query_param || '');
       setResponseStatus(selectedMock.res_status || '');
       setPriority(selectedMock.priority || '');
       setMockType(selectedMock.mock_type || 'Default');
@@ -46,12 +66,12 @@ const MockCreate = ({ collections, selectedMock }) => {
       setPort(selectedMock.port || '');
       setSchema(selectedMock.schema || 'http');
 
-      // Also update free text
       const mockData = {
         name: selectedMock.name || '',
         collectionId: selectedMock.collectionId || '',
         method: selectedMock.req_method || 'GET',
         pathParam: selectedMock.req_path_param || '',
+        queryParam: selectedMock.req_query_param || '',
         responseStatus: selectedMock.res_status || '',
         priority: selectedMock.priority || '',
         mockType: selectedMock.mock_type || 'Default',
@@ -73,6 +93,7 @@ const MockCreate = ({ collections, selectedMock }) => {
       collectionId: selectedCollection,
       method,
       pathParam,
+      queryParam,
       responseStatus,
       priority,
       mockType,
@@ -86,11 +107,16 @@ const MockCreate = ({ collections, selectedMock }) => {
     };
 
     try {
-      await createMock(mockData);
-      setMessage({ type: 'success', text: 'Mock saved successfully!' });
-      setTimeout(() => {
-        setMessage(null);
-      }, 1500);
+      if (selectedMock?.id) {
+        await updateMock(selectedMock.id, mockData);
+        setMessage({ type: 'success', text: 'Mock updated successfully!' });
+      } else {
+        await createMock(mockData);
+        setMessage({ type: 'success', text: 'Mock saved successfully!' });
+      }
+      await refreshCollections();
+
+      setTimeout(() => setMessage(null), 1500);
     } catch (err) {
       setMessage({ type: 'error', text: err.message });
     }
@@ -98,32 +124,20 @@ const MockCreate = ({ collections, selectedMock }) => {
 
   const handleToggleView = () => {
     if (isFormView) {
-      // Form to Free Text
       const data = {
-        name,
-        collectionId: selectedCollection,
-        method,
-        pathParam,
-        responseStatus,
-        priority,
-        mockType,
-        requestHeader,
-        requestBody,
-        responseHeader,
-        responseBody,
-        host,
-        port,
-        schema,
+        name, collectionId: selectedCollection, method, pathParam, queryParam,
+        responseStatus, priority, mockType, requestHeader, requestBody,
+        responseHeader, responseBody, host, port, schema
       };
       setFreeText(JSON.stringify(data, null, 2));
     } else {
-      // Free Text to Form
       try {
         const parsed = JSON.parse(freeText);
         setName(parsed.name || '');
         setSelectedCollection(parsed.collectionId || '');
         setMethod(parsed.method || 'GET');
         setPathParam(parsed.pathParam || '');
+        setQueryParam(parsed.queryParam || '');
         setResponseStatus(parsed.responseStatus || '');
         setPriority(parsed.priority || '');
         setMockType(parsed.mockType || 'Default');
@@ -142,51 +156,56 @@ const MockCreate = ({ collections, selectedMock }) => {
     setIsFormView(!isFormView);
   };
 
+  const previewUrl = `${schema}://${host || 'your-host'}:${port || 'port'}${pathParam || ''}${queryParam ? `?${queryParam}` : ''}`;
+
+  const constructCurl = () => {
+    const curlParts = [
+      `curl -X ${method} "${previewUrl}"`,
+      requestHeader ? `-H "${requestHeader.replace(/\n/g, '" -H "')}"` : '',
+      requestBody ? `-d '${requestBody}'` : ''
+    ];
+    return curlParts.filter(Boolean).join(' \\\n  ');
+  };
+
   return (
     <div className="bg-gray-800 p-6 rounded-xl shadow-lg space-y-6">
-      {message && (
-        <MessageBox
-          type={message.type}
-          message={message.text}
-          onClose={() => setMessage(null)}
-        />
-      )}
+      {message && <MessageBox type={message.type} message={message.text} onClose={() => setMessage(null)} />}
 
-      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center space-x-4">
           {!selectedMock?.id && <h3 className="text-2xl font-bold mb-0">Create Mock</h3>}
-          <input
-            type="text"
-            placeholder="Mock Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="bg-gray-700 text-white px-3 py-2 rounded w-48"
-          />
+          {isFormView && (
+            <input
+              type="text"
+              placeholder="Mock Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="bg-gray-700 text-white px-3 py-2 rounded w-48"
+            />
+          )}
         </div>
 
         <div className="flex items-center space-x-4">
-          <label className="text-sm text-gray-300 flex items-center space-x-2">
-            <span>Collection Name</span>
-            <select
-              className="bg-gray-700 text-white px-3 py-2 rounded"
-              value={selectedCollection}
-              onChange={(e) => setSelectedCollection(e.target.value)}
-            >
-              {collections.length > 0 ? (
-                collections.map((col) => (
-                  <option key={col.id} value={col.id}>
-                    {col.name}
-                  </option>
-                ))
-              ) : (
-                <option value="default" disabled>
-                  No collections available
-                </option>
-              )}
-            </select>
-          </label>
-
+          {isFormView && (
+            <label className="text-sm text-gray-300 flex items-center space-x-2">
+              <span>Collection Name</span>
+              <select
+                className="bg-gray-700 text-white px-3 py-2 rounded"
+                value={selectedCollection}
+                onChange={(e) => setSelectedCollection(e.target.value)}
+              >
+                {collections.length > 0 ? (
+                  collections.map((col) => (
+                    <option key={col.id} value={col.id}>
+                      {col.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="default" disabled>No collections available</option>
+                )}
+              </select>
+            </label>
+          )}
           <button
             className="text-white bg-gray-600 px-4 py-2 rounded hover:bg-gray-500"
             onClick={handleToggleView}
@@ -196,6 +215,7 @@ const MockCreate = ({ collections, selectedMock }) => {
         </div>
       </div>
 
+      {/* Form View */}
       {isFormView ? (
         <>
           <div className="grid grid-cols-2 gap-4">
@@ -208,7 +228,6 @@ const MockCreate = ({ collections, selectedMock }) => {
                 className="w-full p-2 rounded bg-gray-700 text-white"
               />
             </div>
-
             <div>
               <label className="block text-sm mb-1">Mock Type</label>
               <select
@@ -226,138 +245,93 @@ const MockCreate = ({ collections, selectedMock }) => {
             <div className="border-t border-gray-700 pt-4">
               <h4 className="text-lg font-semibold mb-2 text-gray-200">Forward Settings</h4>
               <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm mb-1">Host</label>
-                  <input
-                    type="text"
-                    value={host}
-                    onChange={(e) => setHost(e.target.value)}
-                    className="w-full p-2 rounded bg-gray-700 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm mb-1">Port</label>
-                  <input
-                    type="text"
-                    value={port}
-                    onChange={(e) => setPort(e.target.value)}
-                    className="w-full p-2 rounded bg-gray-700 text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm mb-1">Schema</label>
-                  <select
-                    className="w-full p-2 rounded bg-gray-700 text-white"
-                    value={schema}
-                    onChange={(e) => setSchema(e.target.value)}
-                  >
-                    <option value="http">HTTP</option>
-                    <option value="https">HTTPS</option>
-                  </select>
-                </div>
+                <input value={host} onChange={(e) => setHost(e.target.value)} className="p-2 bg-gray-700 text-white rounded" placeholder="Host" />
+                <input value={port} onChange={(e) => setPort(e.target.value)} className="p-2 bg-gray-700 text-white rounded" placeholder="Port" />
+                <select value={schema} onChange={(e) => setSchema(e.target.value)} className="p-2 bg-gray-700 text-white rounded">
+                  <option value="http">HTTP</option>
+                  <option value="https">HTTPS</option>
+                </select>
               </div>
             </div>
           )}
 
-          {/* Request and Response */}
           <div className="border-t border-gray-700 pt-4">
             <h4 className="text-lg font-semibold mb-2 text-gray-200">📝 Request</h4>
-            <div className="grid grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm mb-1">Method</label>
-                <select
-                  className="w-full p-2 rounded bg-gray-700 text-white"
-                  value={method}
-                  onChange={(e) => setMethod(e.target.value)}
-                >
-                  <option>GET</option>
-                  <option>POST</option>
-                  <option>PUT</option>
-                  <option>DELETE</option>
-                </select>
-              </div>
-              <div className="col-span-3">
-                <label className="block text-sm mb-1">Path Param</label>
-                <input
-                  type="text"
-                  value={pathParam}
-                  onChange={(e) => setPathParam(e.target.value)}
-                  className="w-full p-2 rounded bg-gray-700 text-white"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm mb-1">Request Header</label>
-              <textarea
-                value={requestHeader}
-                onChange={(e) => setRequestHeader(e.target.value)}
-                className="w-full p-2 rounded bg-gray-700 text-white"
-                rows="2"
+            <div className="grid grid-cols-8 gap-4">
+              <select value={method} onChange={(e) => setMethod(e.target.value)} className="col-span-1 p-2 bg-gray-700 text-white rounded">
+                <option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option>
+              </select>
+              <input
+                type="text"
+                value={pathParam}
+                onChange={(e) => setPathParam(e.target.value)}
+                className="col-span-3 p-2 bg-gray-700 text-white rounded"
+                placeholder="/api/path"
+              />
+              <input
+                type="text"
+                value={queryParam}
+                onChange={(e) => setQueryParam(e.target.value)}
+                className="col-span-4 p-2 bg-gray-700 text-white rounded"
+                placeholder="query=example"
               />
             </div>
-            <div>
-              <label className="block text-sm mb-1">Request Body</label>
-              <textarea
-                value={requestBody}
-                onChange={(e) => setRequestBody(e.target.value)}
-                className="w-full p-2 rounded bg-gray-700 text-white"
-                rows="2"
-              />
-            </div>
+            <textarea value={requestHeader} onChange={(e) => setRequestHeader(e.target.value)} className="w-full p-2 rounded bg-gray-700 text-white mt-2" rows="2" placeholder="Request Header" />
+            <textarea value={requestBody} onChange={(e) => setRequestBody(e.target.value)} className="w-full p-2 rounded bg-gray-700 text-white mt-2" rows="2" placeholder="Request Body" />
           </div>
 
           <div className="border-t border-gray-700 pt-4">
             <h4 className="text-lg font-semibold mb-2 text-gray-200">🎯 Response</h4>
             {mockType === 'Forward' ? (
-              <div className="text-gray-300">
-                Response forwarded from <strong>{`${schema}://${host}:${port}`}</strong>
-              </div>
+              <div className="text-gray-300">Response forwarded from <strong>{`${schema}://${host}:${port}`}</strong></div>
             ) : (
               <>
-                <div>
-                  <label className="block text-sm mb-1">Response Status</label>
-                  <input
-                    type="number"
-                    value={responseStatus}
-                    onChange={(e) => setResponseStatus(e.target.value)}
-                    className="w-full p-2 rounded bg-gray-700 text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm mb-1">Response Header</label>
-                  <textarea
-                    value={responseHeader}
-                    onChange={(e) => setResponseHeader(e.target.value)}
-                    className="w-full p-2 rounded bg-gray-700 text-white"
-                    rows="2"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm mb-1">Response Body</label>
-                  <textarea
-                    value={responseBody}
-                    onChange={(e) => setResponseBody(e.target.value)}
-                    className="w-full p-2 rounded bg-gray-700 text-white"
-                    rows="4"
-                  />
-                </div>
+                <input type="number" value={responseStatus} onChange={(e) => setResponseStatus(e.target.value)} className="w-full p-2 rounded bg-gray-700 text-white" placeholder="Response Status" />
+                <textarea value={responseHeader} onChange={(e) => setResponseHeader(e.target.value)} className="w-full p-2 rounded bg-gray-700 text-white mt-2" rows="2" placeholder="Response Header" />
+                <textarea value={responseBody} onChange={(e) => setResponseBody(e.target.value)} className="w-full p-2 rounded bg-gray-700 text-white mt-2" rows="4" placeholder="Response Body" />
               </>
             )}
           </div>
         </>
       ) : (
-        <div>
-          <textarea
-            className="w-full p-2 rounded bg-gray-700 text-white"
-            rows="20"
-            value={freeText}
-            onChange={(e) => setFreeText(e.target.value)}
-            placeholder="Write free text mock API details here..."
-          />
-        </div>
+        <textarea
+          className="w-full p-2 rounded bg-gray-700 text-white"
+          rows="20"
+          value={freeText}
+          onChange={(e) => setFreeText(e.target.value)}
+          placeholder="Write free text mock API details here..."
+        />
       )}
+
+      {/* Preview Section */}
+      <div className="border-t border-gray-700 pt-4 space-y-2">
+        <h4 className="text-lg font-semibold text-gray-200">🔍 Preview</h4>
+        <div className="flex items-center space-x-4">
+          <span className="text-sm text-gray-300">
+            {`${getApiBaseUrl(schema, host, port)}${pathParam}${queryParam ? `?${queryParam}` : ''}`}
+          </span>
+
+          <button
+            className="text-sm bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-500"
+            onClick={() => setShowCurlPreview(!showCurlPreview)}
+          >
+            {showCurlPreview ? 'Hide cURL' : 'Show cURL'}
+          </button>
+        </div>
+
+        {showCurlPreview && (
+          <div className="bg-gray-900 text-green-400 font-mono text-sm p-4 rounded relative">
+            <pre>{buildCurlCommand()}</pre>
+            <button
+              className="absolute top-2 right-2 text-xs bg-gray-700 text-white px-2 py-1 rounded hover:bg-gray-600"
+              onClick={() => navigator.clipboard.writeText(buildCurlCommand())}
+            >
+              📋 Copy
+            </button>
+          </div>
+        )}
+      </div>
+
 
       <button
         className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded"

@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS mock (
   req_method VARCHAR(10)  DEFAULT 'GET',
   req_header text,
   req_body TEXT,
-  req_query_params text,
+  req_query_param text,
   res_status INTEGER DEFAULT 200,
   res_header text,
   res_body TEXT,

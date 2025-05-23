@@ -25,13 +25,34 @@ export const createMock = async (mockData) => {
     try {
       const errData = await response.json();
       errorMsg = errData.message || errorMsg;
-    } catch {}
+    } catch { }
     throw new Error(errorMsg);
   }
 
   return response.json();
 };
+export const updateMock = async (mockId, mockData) => {
+  const token = getToken();
+  const response = await fetch(`${API_BASE_URL}/api/ditto/mock/${mockId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(mockData),
+  });
 
+  if (!response.ok) {
+    let errorMsg = 'Failed to update mock';
+    try {
+      const errData = await response.json();
+      errorMsg = errData.message || errorMsg;
+    } catch { }
+    throw new Error(errorMsg);
+  }
+
+  return response.json();
+};
 /**
  * Retrieves all mock configurations.
  * @returns {Promise<Array>} List of mocks.

@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import MessageBox from './MessageBox';
 import { createCollection } from '../services/collectionService';
 
-const CollectionPopup = ({ onClose }) => {
+const CollectionPopup = ({ onClose, refreshCollections }) => {
   const [collectionName, setCollectionName] = useState('');
   const [message, setMessage] = useState(null);
 
   const handleCreate = async () => {
     try {
       await createCollection(collectionName);
+      await refreshCollections();
       setMessage({ type: 'success', text: 'Collection created successfully!' });
       setTimeout(() => {
         setMessage(null);

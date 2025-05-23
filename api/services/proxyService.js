@@ -9,14 +9,14 @@ async function callProxyHost(selected) {
     req_method,
     req_header,
     req_body,
-    req_query_params
+    req_query_param
   } = selected;
 
   const url = `${schema}://${host}${port ? `:${port}` : ''}${req_path_param || '/'}`;
 
   try {
     const headers = req_header ? JSON.parse(req_header) : {};
-    const params = req_query_params ? JSON.parse(req_query_params) : {};
+    const params = req_query_param ? JSON.parse(req_query_param) : {};
 
     const response = await axios({
       method: req_method?.toLowerCase() || 'get',

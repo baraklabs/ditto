@@ -2,7 +2,7 @@ const CollectionModel = require('../models/collectionModel');
 
 function parseText(val) {
   return val
-  if (!val || val=="") return null;
+  if (!val || val == "") return null;
   try {
     return JSON.parse(val);
   } catch {
@@ -22,7 +22,7 @@ const CollectionService = {
         req_method: mock.req_method,
         req_header: parseText(mock.req_header),
         req_body: parseText(mock.req_body),
-        req_query_params: parseText(mock.req_query_params),
+        req_query_param: parseText(mock.req_query_param),
         res_status: mock.res_status,
         res_header: parseText(mock.res_header),
         res_body: parseText(mock.res_body),
@@ -46,7 +46,9 @@ const CollectionService = {
   ,
   getCollectionById: (id) => CollectionModel.getById(id),
   createCollection: (data, userId) => CollectionModel.create(data, userId),
-  updateCollection: (id, data) => CollectionModel.update(id, data),
+  updateCollection: (id, data, userId) => {
+    return CollectionModel.update(id, data, userId);
+  },
   deleteCollection: (id) => CollectionModel.remove(id)
 };
 

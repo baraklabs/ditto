@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 import MockSideNav from '../components/MockSideNav';
 import MockCreate from '../components/MockCreate';
 import RequestResponse from '../components/RequestResponse';
-import { getCollectionsMocks } from '../services/collectionService';
+import { getCollectionsMocks, renameCollection } from '../services/collectionService';
 
 const Mock = () => {
   const [expanded, setExpanded] = useState(null);
@@ -24,14 +24,42 @@ const Mock = () => {
     fetchData();
   }, []);
 
+  const fetchCollections = async () => {
+    try {
+      const data = await getCollectionsMocks();
+      setCollections(data);
+    } catch (error) {
+      console.error('Error fetching collections:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCollections();
+  }, []);
+
   const renderRightPanel = () => {
     switch (view) {
       case 'create':
-        return <MockCreate  collections={collections} selectedMock={selectedMock} />;
+        return <MockCreate collections={collections} selectedMock={selectedMock}
+          refreshCollections={fetchCollections}
+          setExpanded={setExpanded} />;
       case 'request-response':
         return <RequestResponse />;
       default:
-        return <MockCreate collections={collections} selectedMock={selectedMock} />;
+        return <MockCreate collections={collections} selectedMock={selectedMock}
+          refreshCollections={fetchCollections}
+          setExpanded={setExpanded} />;
+    }
+  };
+  const handleRenameCollection = async (index, newName) => {
+    try {
+      const collection = collections[index];
+      if (!collection) return;
+
+      await renameCollection(collection.id, newName);
+      await fetchCollections(); // Refresh after successful rename
+    } catch (error) {
+      console.error('Error renaming collection:', error);
     }
   };
 
@@ -46,6 +74,8 @@ const Mock = () => {
           setSelectedMock={setSelectedMock}
           setView={setView}
           collections={collections}
+          onRenameCollection={handleRenameCollection}
+          refreshCollections={fetchCollections}
         />
         <div className="w-3/4 pl-4">{renderRightPanel()}</div>
       </div>

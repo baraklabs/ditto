@@ -50,15 +50,20 @@ const CollectionModel = {
       [data.name, userId]
     );
     return result.rows[0];
-  },  
-
-  async update(id, data) {
-    const result = await pool.query(
-      'UPDATE collection SET name = $1, updated_on = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
-      [data.name, id]
-    );
-    return result.rows[0];
   },
+
+  async update(id, data, userId) {
+    const result = await pool.query(
+      `UPDATE collection 
+     SET name = $1, updated_on = CURRENT_TIMESTAMP 
+     WHERE id = $2 AND user_id = $3
+     RETURNING *`,
+      [data.name, id, userId]
+    );
+
+    return result.rows[0]; // returns undefined if no match
+  }
+  ,
 
   async remove(id) {
     const result = await pool.query('DELETE FROM collection WHERE id = $1 RETURNING *', [id]);
@@ -70,7 +75,7 @@ const CollectionModel = {
       [userId]
     );
     return result.rows;
-  }
+  },
 
 };
 
