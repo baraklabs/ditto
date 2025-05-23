@@ -76,28 +76,33 @@ const MockModel = {
       cookies = $11,
       mock_type = $12,
       priority = $13,
+      host = $14,
+      port = $15,
+      schema = $16,
       updated_at = CURRENT_TIMESTAMP
-    WHERE id = $14 AND user_id = $15
+    WHERE id = $17 AND user_id = $18
     RETURNING *`,
       [
         data.name,
-        data.req_path_param || null,
-        data.req_method || 'GET',
-        data.req_header || null,
-        data.req_body || null,
-        data.req_query_param || null,
-        Number.isInteger(data.res_status) ? data.res_status : null,
-        data.res_header || null,
-        data.res_body || null,
-        Number.isInteger(data.res_delay_ms) ? data.res_delay_ms : null,
+        data.pathParam || null,
+        data.method || 'GET',
+        data.requestHeader || null,
+        data.requestBody || null,
+        data.queryParam || null,
+        Number.isInteger(+data.responseStatus) ? +data.responseStatus : null,
+        data.responseHeader || null,
+        data.responseBody || null,
+        Number.isInteger(+data.responseDelayMs) ? +data.responseDelayMs : null,
         data.cookies || null,
-        data.mock_type || null,
-        Number.isInteger(data.priority) ? data.priority : null,
+        data.mockType || null,
+        Number.isInteger(+data.priority) ? +data.priority : null,
+        data?.host ?? null,
+        Number.isInteger(+data?.port) ? +data.port : null,
+        data?.schema ?? null,
         id,
         userId
       ]
     );
-
     return result.rows[0];
   }
 
