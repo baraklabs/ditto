@@ -1,8 +1,8 @@
 # Ditto
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
-[![Made with Node.js](https://img.shields.io/badge/Made%20with-Node.js-339933.svg)](https://nodejs.org)
+[![Ditto Website](https://img.shields.io/badge/Website-baraklabs.com-blue?logo=google-chrome)](https://baraklabs.com/ditto)
+[![Cloud Deployment](https://img.shields.io/badge/Cloud%20Instance-baraklabs.com-green?logo=cloud)](https://baraklabs.com)
 
 Ditto is a lightweight mock API server, simulate dynamic responses...
 
