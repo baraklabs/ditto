@@ -144,7 +144,6 @@ _– Team BarakLabs 💚_
 
 ### Support us via:
 
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-Donate-orange?style=for-the-badge&logo=ko-fi)](https://ko-fi.com/baraklabs)
 [![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-000?style=for-the-badge&logo=github)](https://github.com/sponsors/baraklabs)
 
 ---
