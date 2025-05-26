@@ -142,6 +142,12 @@ Please drop us a quick note at **info@baraklabs.com**
 _– Team BarakLabs 💚_
 
 
+### Support us via:
+
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Donate-orange?style=for-the-badge&logo=ko-fi)](https://ko-fi.com/baraklabs)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-☕-ff813f?style=for-the-badge&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/baraklabs)
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-000?style=for-the-badge&logo=github)](https://github.com/sponsors/baraklabs)
+
 ---
 
 
