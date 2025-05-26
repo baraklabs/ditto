@@ -1,8 +1,6 @@
 # Ditto
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Docker Build](https://img.shields.io/docker/build/your-dockerhub-username/ditto)](https://hub.docker.com/r/your-dockerhub-username/ditto)
-[![CI](https://github.com/baraklabs/ditto/actions/workflows/ci.yml/badge.svg)](https://github.com/baraklabs/ditto/actions/workflows/ci.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
 [![Made with Node.js](https://img.shields.io/badge/Made%20with-Node.js-339933.svg)](https://nodejs.org)
 
@@ -136,4 +134,5 @@ We'll get back to you with details.
 
 ---
 
-Made with ❤️ in India by [BarakLabs](https://baraklabs.com)
+
+[![Made in India](https://img.shields.io/badge/Made%20with%20❤️%20in-India-orange?style=for-the-badge)](https://baraklabs.com)
