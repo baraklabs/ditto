@@ -28,7 +28,7 @@ Ditto is a lightweight mock API server, simulate dynamic responses. It supports:
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/yourusername/ditto.git
+git clone https://github.com/baraklabs/ditto.git
 cd ditto
 ### ✅ 2. Build & Start Docker Compose
 
@@ -41,7 +41,7 @@ This will:
 1. Pull the `postgres` image
 2. Build your Node.js app image
 3. Start the database and wait for it
-4. Run migrations using `runMigrations.js`
+4. Run migrations using `migrateAndSeed.js`
 5. Start your Express app on port `3001`
 
 ---
