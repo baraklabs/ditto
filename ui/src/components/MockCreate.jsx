@@ -289,11 +289,13 @@ const MockCreate = ({ collections, selectedMock, refreshCollections, setExpanded
                 value={queryParam}
                 onChange={(e) => setQueryParam(e.target.value)}
                 className="col-span-4 p-2 bg-gray-700 text-white rounded"
-                placeholder="query=example"
+                placeholder="query=example&user_id=5"
               />
             </div>
-            <textarea value={requestHeader} onChange={(e) => setRequestHeader(e.target.value)} className="w-full p-2 rounded bg-gray-700 text-white mt-2" rows="2" placeholder="Request Header" />
-            <textarea value={requestBody} onChange={(e) => setRequestBody(e.target.value)} className="w-full p-2 rounded bg-gray-700 text-white mt-2" rows="2" placeholder="Request Body" />
+            <textarea value={requestHeader} onChange={(e) => setRequestHeader(e.target.value)} className="w-full p-2 rounded bg-gray-700 text-white mt-2" rows="3"
+              placeholder={`Content-Type: application/json\nAuthorization: Bearer <token>`} />
+            <textarea value={requestBody} onChange={(e) => setRequestBody(e.target.value)} className="w-full p-2 rounded bg-gray-700 text-white mt-2 font-mono"
+              rows="6" placeholder={`{"name": "John Doe","email": "john@example.com","active": true}`} />
           </div>
 
           <div className="border-t border-gray-700 pt-4">
@@ -337,7 +339,8 @@ const MockCreate = ({ collections, selectedMock, refreshCollections, setExpanded
 
         {showCurlPreview && (
           <div className="bg-gray-900 text-green-400 font-mono text-sm p-4 rounded relative">
-            <pre>{buildCurlCommand()}</pre>
+            <pre className="whitespace-pre-wrap break-words">{buildCurlCommand()}</pre>
+
             <button
               className="absolute top-2 right-2 text-xs bg-gray-700 text-white px-2 py-1 rounded hover:bg-gray-600"
               onClick={() => navigator.clipboard.writeText(buildCurlCommand())}
@@ -369,7 +372,7 @@ const MockCreate = ({ collections, selectedMock, refreshCollections, setExpanded
       </div>
 
 
-    </div>
+    </div >
   );
 };
 
