@@ -126,11 +126,21 @@ Ditto/
 
 ## 💖 Sponsor Ditto
 
-Sponsorships help keep Ditto alive and improving.  
-If you'd like to support the project, please email us at **info@baraklabs.com** and say hello.  
-We'll get back to you with details.
+Sponsorships help keep Ditto running smoothly and actively maintained.
 
-[![Sponsor](https://img.shields.io/badge/Sponsor-Email%20Us-brightgreen)](mailto:info@baraklabs.com)
+Your support will go **directly toward keeping the product afloat** — covering hosting, bug fixes, and continuous improvements.
+
+However, we would **love to know why you're choosing to sponsor us**.  
+It could be as simple as:
+
+> "Ditto helped in our day-to-day tasks!"  
+> or  
+> "Hi 👋 – just wanted to show appreciation!"
+
+Please drop us a quick note at **info@baraklabs.com**
+
+_– Team BarakLabs 💚_
+
 
 ---
 
