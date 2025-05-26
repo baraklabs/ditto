@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { createMock, updateMock } from '../services/mockService';
+import { createMock, updateMock, deleteMock } from '../services/mockService';
 import MessageBox from './MessageBox';
 import { getApiBaseUrl } from "../utils/getApiBaseUrl";
+import { Trash2 } from 'lucide-react';
 
 const MockCreate = ({ collections, selectedMock, refreshCollections, setExpanded }) => {
   const [isFormView, setIsFormView] = useState(true);
@@ -117,6 +118,21 @@ const MockCreate = ({ collections, selectedMock, refreshCollections, setExpanded
       await refreshCollections();
 
       setTimeout(() => setMessage(null), 1500);
+    } catch (err) {
+      setMessage({ type: 'error', text: err.message });
+    }
+  };
+  const handleDelete = async () => {
+    if (!selectedMock?.id) return;
+
+    const confirmed = window.confirm('Are you sure you want to delete this mock?');
+    if (!confirmed) return;
+
+    try {
+      await deleteMock(selectedMock.id);
+      setMessage({ type: 'success', text: 'Mock deleted successfully!' });
+      await refreshCollections();
+      setExpanded(null); // collapse view or reset state
     } catch (err) {
       setMessage({ type: 'error', text: err.message });
     }
@@ -333,12 +349,26 @@ const MockCreate = ({ collections, selectedMock, refreshCollections, setExpanded
       </div>
 
 
-      <button
-        className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded"
-        onClick={handleSaveOrUpdate}
-      >
-        {selectedMock?.id ? 'Update' : 'Save'}
-      </button>
+      <div className="flex justify-between items-center pt-4 border-t border-gray-700">
+        <button
+          className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded"
+          onClick={handleSaveOrUpdate}
+        >
+          {selectedMock?.id ? 'Update Mock' : 'Create Mock'}
+        </button>
+
+        {selectedMock?.id && (
+          <button
+            onClick={handleDelete}
+            className="text-red-500 hover:text-red-700 p-2 ml-auto"
+            title="Delete Mock"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
+        )}
+      </div>
+
+
     </div>
   );
 };

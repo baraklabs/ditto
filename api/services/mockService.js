@@ -39,7 +39,7 @@ const MockService = {
     }
   }
   ,
-  deleteMock: (id) => MockModel.remove(id)
+  deleteMock: (id, userId) => MockModel.remove(id, userId)
 };
 
 module.exports = MockService;

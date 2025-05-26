@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Plus, Pencil } from 'lucide-react';
+import { Plus, Pencil, Trash } from 'lucide-react';
 import CollectionPopup from './CollectionPopup';
 
 const MockSideNav = ({ collections, expanded, setExpanded, setSelectedMock, setView, onRenameCollection,
-  refreshCollections }) => {
+  refreshCollections, onDeleteCollection }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editValue, setEditValue] = useState('');
@@ -45,7 +45,7 @@ const MockSideNav = ({ collections, expanded, setExpanded, setSelectedMock, setV
           <button onClick={() => setShowPopup(true)}>
             <Plus className="text-white hover:text-green-400" />
           </button>
-          {showPopup && <CollectionPopup onClose={() => setShowPopup(false)}  refreshCollections={refreshCollections} />}
+          {showPopup && <CollectionPopup onClose={() => setShowPopup(false)} refreshCollections={refreshCollections} />}
         </div>
 
         {collections.length === 0 ? (
@@ -84,6 +84,19 @@ const MockSideNav = ({ collections, expanded, setExpanded, setSelectedMock, setV
                 >
                   <Pencil size={16} />
                 </button>
+                <button
+                  onClick={() => {
+                    const confirmed = window.confirm("This will delete the collection and all its mocks. Are you sure?");
+                    if (confirmed) {
+                      onDeleteCollection(i); // You'll pass this as a prop
+                    }
+                  }}
+                  className="text-red-400 hover:text-red-600"
+                  title="Delete collection"
+                >
+                  <Trash size={16} />
+                </button>
+
               </div>
               {expanded === i && (
                 <ul className="mt-2 pl-4 space-y-2">

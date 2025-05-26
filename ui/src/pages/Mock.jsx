@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 import MockSideNav from '../components/MockSideNav';
 import MockCreate from '../components/MockCreate';
 import RequestResponse from '../components/RequestResponse';
-import { getCollectionsMocks, renameCollection } from '../services/collectionService';
+import { getCollectionsMocks, renameCollection, deleteCollection } from '../services/collectionService';
 
 const Mock = () => {
   const [expanded, setExpanded] = useState(null);
@@ -62,6 +62,18 @@ const Mock = () => {
       console.error('Error renaming collection:', error);
     }
   };
+  const handleDeleteCollection = async (index) => {
+    try {
+      const collection = collections[index];
+      if (!collection) return;
+
+      await deleteCollection(collection.id);  
+      await fetchCollections();                
+    } catch (error) {
+      console.error('Error deleting collection:', error);
+    }
+  };
+
 
   return (
     <>
@@ -76,6 +88,7 @@ const Mock = () => {
           collections={collections}
           onRenameCollection={handleRenameCollection}
           refreshCollections={fetchCollections}
+          onDeleteCollection={handleDeleteCollection}
         />
         <div className="w-3/4 pl-4">{renderRightPanel()}</div>
       </div>

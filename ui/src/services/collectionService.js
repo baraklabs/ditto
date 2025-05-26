@@ -74,3 +74,20 @@ export const renameCollection = async (id, newName) => {
 
   return response.json();
 };
+
+export const deleteCollection = async (id) => {
+  const token = getToken();
+  const response = await fetch(`${API_BASE_URL}/api/ditto/collection/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Failed to delete collection');
+  }
+
+  return response.json();
+};
