@@ -1,6 +1,13 @@
 # Ditto
 
-Ditto is a lightweight mock API server, simulate dynamic responses. It supports:
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Docker Build](https://img.shields.io/docker/build/your-dockerhub-username/ditto)](https://hub.docker.com/r/your-dockerhub-username/ditto)
+[![CI](https://github.com/baraklabs/ditto/actions/workflows/ci.yml/badge.svg)](https://github.com/baraklabs/ditto/actions/workflows/ci.yml)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
+[![Made with Node.js](https://img.shields.io/badge/Made%20with-Node.js-339933.svg)](https://nodejs.org)
+
+Ditto is a lightweight mock API server, simulate dynamic responses...
+
 
 - Creating mock endpoints with custom request/response behavior
 - Viewing and logging incoming requests
@@ -117,3 +124,16 @@ Ditto/
     ├── 002_create_mocks.sql
     └── 003_create_request_response.sql
 ```
+---
+
+## 💖 Sponsor Ditto
+
+Sponsorships help keep Ditto alive and improving.  
+If you'd like to support the project, please email us at **info@baraklabs.com** and say hello.  
+We'll get back to you with details.
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-Email%20Us-brightgreen)](mailto:info@baraklabs.com)
+
+---
+
+Made with ❤️ in India by [BarakLabs](https://baraklabs.com)
