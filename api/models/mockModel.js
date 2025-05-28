@@ -108,10 +108,15 @@ const MockModel = {
 
   ,
 
-  async remove(id) {
-    const result = await pool.query('DELETE FROM mock WHERE id = $1 RETURNING *', [id]);
+  async remove(id, userId) {
+    const result = await pool.query(
+      'DELETE FROM mock WHERE id = $1 AND user_id = $2 RETURNING *',
+      [id, userId]
+    );
+
     return result.rows[0];
   }
+
   ,
   async getMocks(req_method) {
 
@@ -129,6 +134,15 @@ const MockModel = {
       throw error;
     }
   }
+  ,
+  async removeManyByIds(mockIds, userId) {
+    if (!mockIds.length) return;
+
+    await pool.query(
+      `DELETE FROM mock WHERE id = ANY($1) AND user_id = $2`,
+      [mockIds, userId]
+    );
+  },
 
 };
 

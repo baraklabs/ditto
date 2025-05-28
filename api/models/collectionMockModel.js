@@ -83,6 +83,11 @@ const CollectionMockModel = {
       [newCollectionId, mockId]
     );
   }
+  ,
+  async removeByCollectionId(collectionId) {
+  await pool.query('DELETE FROM collection_mock WHERE collection_id = $1', [collectionId]);
+},
+
 };
 
 module.exports = CollectionMockModel;

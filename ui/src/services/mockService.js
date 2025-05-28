@@ -71,3 +71,24 @@ export const getMocks = async () => {
   }
   return response.json();
 };
+
+export const deleteMock = async (mockId) => {
+  const token = getToken();
+  const response = await fetch(`${API_BASE_URL}/api/ditto/mock/${mockId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    let errorMsg = 'Failed to delete mock';
+    try {
+      const errData = await response.json();
+      errorMsg = errData.message || errorMsg;
+    } catch {}
+    throw new Error(errorMsg);
+  }
+
+  return response.json();
+};

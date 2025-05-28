@@ -2,7 +2,7 @@ const MockService = require('../services/mockService');
 
 const getAllMocks = async (req, res) => {
   try {
-    let userId= req.user.userId
+    let userId = req.user.userId
 
     const mocks = await MockService.listMocks(userId);
     res.json(mocks);
@@ -24,12 +24,12 @@ const getMockById = async (req, res) => {
 
 const createMock = async (req, res) => {
   const mockData = req.body;
-  let userId= req.user.userId
+  let userId = req.user.userId
   try {
     const created = await MockService.createMock(mockData, userId);
     res.status(201).json(created);
   } catch (err) {
-    console.log("Error creating mock",err);
+    console.log("Error creating mock", err);
     res.status(500).json({ message: 'Error creating mock' });
   }
 };
@@ -37,7 +37,7 @@ const createMock = async (req, res) => {
 const updateMock = async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
-  const userId = req.user?.userId; // ensure this is populated by auth middleware
+  const userId = req.user?.userId;
 
   if (!id || !userId) {
     return res.status(400).json({ message: 'Missing mock ID or user ID' });
@@ -56,8 +56,13 @@ const updateMock = async (req, res) => {
 
 const deleteMock = async (req, res) => {
   const { id } = req.params;
+  const userId = req.user?.userId;
+
+  if (!id || !userId) {
+    return res.status(400).json({ message: 'Missing mock ID or user ID' });
+  }
   try {
-    const deleted = await MockService.deleteMock(id);
+    const deleted = await MockService.deleteMock(id, userId);
     if (!deleted) return res.status(404).json({ message: 'Mock not found' });
     res.json(deleted);
   } catch (err) {

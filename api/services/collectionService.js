@@ -1,4 +1,6 @@
 const CollectionModel = require('../models/collectionModel');
+const CollectionMockModel = require('../models/collectionMockModel');
+const MockModel = require('../models/mockModel');
 
 function parseText(val) {
   return val
@@ -49,7 +51,29 @@ const CollectionService = {
   updateCollection: (id, data, userId) => {
     return CollectionModel.update(id, data, userId);
   },
-  deleteCollection: (id) => CollectionModel.remove(id)
+  deleteCollection: async (id, userId) => {
+    // 1. Get the collection and validate ownership
+    const collection = await CollectionModel.getById(id);
+    if (!collection || collection.user_id !== userId) {
+      throw new Error('Collection not found or not authorized to delete');
+    }
+
+    // 2. Get all mappings for the collection
+    const mappings = await CollectionMockModel.getByCollectionId(id);
+
+    // 3. Delete each mock (only if user owns it)
+    const mockIds = mappings.map(m => m.mock_id);
+
+    // Bulk delete mocks if user owns them
+    if (mockIds.length) {
+      await MockModel.removeManyByIds(mockIds, userId);
+    }
+    // 4. Delete all collection_mock mappings
+    await CollectionMockModel.removeByCollectionId(id);
+
+    // 5. Delete the collection
+    return CollectionModel.remove(id)
+  },
 };
 
 module.exports = CollectionService;

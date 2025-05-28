@@ -1,5 +1,5 @@
 const MockModel = require('../models/mockModel');
-const { extractRequestDetails, normalizeRequestData } = require('../utils/requestUtils');
+const { extractRequestDetails, cleanRequestData } = require('../utils/requestUtils');
 const { filterAllMatching } = require('../utils/matchUtils');
 const { handleMockResponse } = require('../utils/responseUtils');
 
@@ -7,14 +7,15 @@ const ProcessMockService = {
     generateMock: async (req, res) => {
         try {
             const rawData = extractRequestDetails(req);
-            const filters = normalizeRequestData(rawData);
+            const cleanedReq = cleanRequestData(rawData);
 
-            const allSavedMocks = await MockModel.getMocks(filters.req_method);
+            const allSavedMocks = await MockModel.getMocks(cleanedReq.req_method);
+
             if (!allSavedMocks || allSavedMocks.length === 0) {
                 return res.status(404).json({ message: "No matching mock found" });
             }
 
-            const matchingMocks = filterAllMatching(allSavedMocks, filters);
+            const matchingMocks = filterAllMatching(allSavedMocks, cleanedReq);
             if (!matchingMocks || matchingMocks.length === 0) {
                 return res.status(404).json({ message: "No matching mock found" });
             }

@@ -69,8 +69,14 @@ const updateCollection = async (req, res) => {
 
 const deleteCollection = async (req, res) => {
   const { id } = req.params;
+  const userId = req.user?.userId; // assuming `req.user` is set from auth middleware
+
+  if (!id || !userId) {
+    return res.status(400).json({ message: 'Missing collection ID or user ID' });
+  }
+
   try {
-    const deleted = await CollectionService.deleteCollection(id);
+    const deleted = await CollectionService.deleteCollection(id, userId);
     if (!deleted) return res.status(404).json({ message: 'Collection not found' });
     res.json(deleted);
   } catch (err) {
