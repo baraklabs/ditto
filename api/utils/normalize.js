@@ -9,8 +9,13 @@ function parseSafely(input) {
 
 function normalizeObject(obj) {
     if (!obj || typeof obj !== 'object') return obj;
+
+    if (Array.isArray(obj)) {
+        return obj.map(normalizeObject);
+    }
+
     return Object.keys(obj).sort().reduce((acc, key) => {
-        acc[key] = obj[key];
+        acc[key] = normalizeObject(obj[key]);
         return acc;
     }, {});
 }

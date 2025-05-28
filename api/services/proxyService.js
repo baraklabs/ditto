@@ -1,16 +1,20 @@
 const axios = require('axios');
 
-async function callProxyHost(selected) {
+async function callProxyHost(selected, cleanedReq) {
   const {
     host,
     port,
     schema,
-    req_path_param,
     req_method,
+  } = selected;
+
+  const {
+    req_path_param,
     req_header,
     req_body,
     req_query_param
-  } = selected;
+
+  } = cleanedReq;
 
   const url = `${schema}://${host}${port ? `:${port}` : ''}${req_path_param || '/'}`;
 
@@ -23,10 +27,9 @@ async function callProxyHost(selected) {
       url,
       headers,
       params,
-      data: req_body ? JSON.parse(req_body) : undefined,
+      data: req_body ? (typeof req_body === 'string' ? JSON.parse(req_body) : req_body) : undefined,
       validateStatus: () => true
     });
-
     return {
       status: response.status,
       headers: response.headers,

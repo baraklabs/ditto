@@ -1,6 +1,6 @@
 const MockModel = require('../models/mockModel');
 const { extractRequestDetails, cleanRequestData } = require('../utils/requestUtils');
-const { filterAllMatching } = require('../utils/matchUtils');
+const { filterAllMatching, sortMockByPriority } = require('../utils/matchUtils');
 const { handleMockResponse } = require('../utils/responseUtils');
 
 const ProcessMockService = {
@@ -10,7 +10,6 @@ const ProcessMockService = {
             const cleanedReq = cleanRequestData(rawData);
 
             const allSavedMocks = await MockModel.getMocks(cleanedReq.req_method);
-
             if (!allSavedMocks || allSavedMocks.length === 0) {
                 return res.status(404).json({ message: "No matching mock found" });
             }
@@ -20,7 +19,13 @@ const ProcessMockService = {
                 return res.status(404).json({ message: "No matching mock found" });
             }
 
-            await handleMockResponse(matchingMocks, res);
+            const sorted = sortMockByPriority(matchingMocks);
+            const selected = sorted[0];
+
+            if (!selected) {
+                return res.status(404).send('No matching mock found');
+            }
+            await handleMockResponse(selected, cleanedReq, res);
 
         } catch (error) {
             console.error("Error generating mock:", error);
