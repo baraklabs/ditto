@@ -1,4 +1,4 @@
-const { normalizeObject, parseSafely, normalizeHeaders, normalizeQuery } = require("./normalize");
+const { normalizeObject, parseSafely,  deNormalizeHeaders } = require("./normalize");
 const { XMLParser } = require('fast-xml-parser');
 
 const parser = new XMLParser({
@@ -112,24 +112,10 @@ function matchReqBody(mock, reqReceived) {
     return mockParsedRaw === reqParsedRaw;
 }
 
-function parseRawHeaders(rawHeaders) {
-    if (!rawHeaders || typeof rawHeaders !== 'string') return {};
-    const lines = rawHeaders.split('\n');
-    const headers = {};
-    for (const line of lines) {
-        const idx = line.indexOf(':');
-        if (idx > 0) {
-            const key = line.slice(0, idx).trim();
-            const val = line.slice(idx + 1).trim();
-            headers[key] = val;
-        }
-    }
-    return headers;
-}
 
 function matchReqHeader(mock, reqReceived) {
-    const mockHeaders = parseRawHeaders(mock.req_header);
-    const actualHeaders = parseRawHeaders(reqReceived.req_header);
+    const mockHeaders = deNormalizeHeaders(mock.req_header);
+    const actualHeaders = deNormalizeHeaders(reqReceived.req_header);
 
     if (!mockHeaders && !actualHeaders) return true; 
     if (!mockHeaders || !actualHeaders) return false; 

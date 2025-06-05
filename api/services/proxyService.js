@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { deNormalizeHeaders } = require("../utils/normalize");
 
 async function callProxyHost(selected, cleanedReq) {
   const {
@@ -19,7 +20,7 @@ async function callProxyHost(selected, cleanedReq) {
   const url = `${schema}://${host}${port ? `:${port}` : ''}${req_path_param || '/'}`;
 
   try {
-    const headers = req_header ? JSON.parse(req_header) : {};
+    const headers = req_header ? deNormalizeHeaders(req_header) : {};
     const params = req_query_param ? JSON.parse(req_query_param) : {};
 
     const response = await axios({
