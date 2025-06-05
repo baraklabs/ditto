@@ -33,7 +33,10 @@ const CollectionService = {
         mock_type: mock.mock_type,
         priority: mock.priority,
         created_at: mock.created_at,
-        updated_at: mock.updated_at
+        updated_at: mock.updated_at,
+        host: mock.host,
+        schema: mock.schema,
+        port: mock.port
       }));
 
       return {

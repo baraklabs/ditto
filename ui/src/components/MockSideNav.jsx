@@ -2,8 +2,16 @@ import React, { useState } from 'react';
 import { Plus, Pencil, Trash } from 'lucide-react';
 import CollectionPopup from './CollectionPopup';
 
-const MockSideNav = ({ collections, expanded, setExpanded, setSelectedMock, setView, onRenameCollection,
-  refreshCollections, onDeleteCollection }) => {
+const MockSideNav = ({
+  collections,
+  expanded,
+  setExpanded,
+  setSelectedMock,
+  setView,
+  onRenameCollection,
+  refreshCollections,
+  onDeleteCollection,
+}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editValue, setEditValue] = useState('');
@@ -15,11 +23,7 @@ const MockSideNav = ({ collections, expanded, setExpanded, setSelectedMock, setV
   const handleRename = (index) => {
     const trimmedNewValue = editValue.trim();
     const originalValue = collections[index].name;
-    debugger
-    if (
-      trimmedNewValue &&
-      trimmedNewValue !== originalValue
-    ) {
+    if (trimmedNewValue && trimmedNewValue !== originalValue) {
       onRenameCollection(index, trimmedNewValue);
     }
     setEditingIndex(null);
@@ -40,12 +44,15 @@ const MockSideNav = ({ collections, expanded, setExpanded, setSelectedMock, setV
           </button>
         </div>
 
+        {/* Mock Collections Section */}
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold">Mock Collections</h3>
           <button onClick={() => setShowPopup(true)}>
             <Plus className="text-white hover:text-green-400" />
           </button>
-          {showPopup && <CollectionPopup onClose={() => setShowPopup(false)} refreshCollections={refreshCollections} />}
+          {showPopup && (
+            <CollectionPopup onClose={() => setShowPopup(false)} refreshCollections={refreshCollections} />
+          )}
         </div>
 
         {collections.length === 0 ? (
@@ -86,9 +93,9 @@ const MockSideNav = ({ collections, expanded, setExpanded, setSelectedMock, setV
                 </button>
                 <button
                   onClick={() => {
-                    const confirmed = window.confirm("This will delete the collection and all its mocks. Are you sure?");
+                    const confirmed = window.confirm('This will delete the collection and all its mocks. Are you sure?');
                     if (confirmed) {
-                      onDeleteCollection(i); // You'll pass this as a prop
+                      onDeleteCollection(i);
                     }
                   }}
                   className="text-red-400 hover:text-red-600"
@@ -96,7 +103,6 @@ const MockSideNav = ({ collections, expanded, setExpanded, setSelectedMock, setV
                 >
                   <Trash size={16} />
                 </button>
-
               </div>
               {expanded === i && (
                 <ul className="mt-2 pl-4 space-y-2">
@@ -118,6 +124,18 @@ const MockSideNav = ({ collections, expanded, setExpanded, setSelectedMock, setV
             </div>
           ))
         )}
+
+        <div className="mt-8">
+          <button
+            onClick={() => {
+              setView('request-response');
+            }}
+            className="text-left text-sm text-gray-300 hover:text-white w-full"
+          >
+            <h3 className="text-lg font-semibold mb-4">Request-Response</h3>
+          </button>
+        </div>
+
       </div>
 
       <div className="mt-auto border-t border-gray-700 pt-4 pb-6 px-4 text-sm text-gray-400">

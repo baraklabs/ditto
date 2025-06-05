@@ -275,7 +275,7 @@ const MockCreate = ({ collections, selectedMock, refreshCollections, setExpanded
             <h4 className="text-lg font-semibold mb-2 text-gray-200">📝 Request</h4>
             <div className="grid grid-cols-8 gap-4">
               <select value={method} onChange={(e) => setMethod(e.target.value)} className="col-span-1 p-2 bg-gray-700 text-white rounded">
-                <option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option>
+                <option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option>
               </select>
               <input
                 type="text"

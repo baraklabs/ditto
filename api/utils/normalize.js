@@ -9,8 +9,13 @@ function parseSafely(input) {
 
 function normalizeObject(obj) {
     if (!obj || typeof obj !== 'object') return obj;
+
+    if (Array.isArray(obj)) {
+        return obj.map(normalizeObject);
+    }
+
     return Object.keys(obj).sort().reduce((acc, key) => {
-        acc[key] = obj[key];
+        acc[key] = normalizeObject(obj[key]);
         return acc;
     }, {});
 }
@@ -41,9 +46,25 @@ function normalizeQuery(query) {
         .join('&');
 }
 
+function deNormalizeHeaders(headerStr) {
+  if (!headerStr || typeof headerStr !== 'string') return {};
+    const lines = headerStr.split('\n');
+    const headers = {};
+    for (const line of lines) {
+        const idx = line.indexOf(':');
+        if (idx > 0) {
+            const key = line.slice(0, idx).trim();
+            const val = line.slice(idx + 1).trim();
+            headers[key] = val;
+        }
+    }
+    return headers;
+}
+
 module.exports = {
     parseSafely,
     normalizeObject,
     normalizeHeaders,
-    normalizeQuery
+    normalizeQuery,
+    deNormalizeHeaders
 };
