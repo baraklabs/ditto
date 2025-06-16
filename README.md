@@ -6,17 +6,15 @@
 
 Ditto is a lightweight mock API server, simulate dynamic responses...
 
-
 - Creating mock endpoints with custom request/response behavior
 - Viewing and logging incoming requests
 - Organizing mocks by collections
-
 
 ## 🧩 Tech Stack
 
 - **Frontend**: React (TailwindCSS, Vite or CRA)
 - **Backend**: Node.js + Express
-- **Database**: PostgreSQL
+- **Database**: PostgreSQL for database
 - **Containerization**: Docker & Docker Compose
 
 ---
@@ -32,14 +30,14 @@ Ditto is a lightweight mock API server, simulate dynamic responses...
 
 ### 1. Clone the repo
 
-```bash
+````bash
 git clone https://github.com/baraklabs/ditto.git
 cd ditto
 ### ✅ 2. Build & Start Docker Compose
 
 ```bash
 docker-compose up --build
-```
+````
 
 This will:
 
@@ -56,6 +54,7 @@ This will:
 Once up:
 
 - Check logs:
+
   ```bash
   docker-compose logs -f
   ```
@@ -66,6 +65,7 @@ Once up:
   ```
 
 If successful, you'll see:
+
 ```json
 { "status": "ok" }
 ```
@@ -75,9 +75,11 @@ If successful, you'll see:
 ## 🔧 APIs Available
 
 ### Health Check
+
 `GET /api/ditto/health`
 
 ### Collections
+
 - `GET /api/ditto/collections`
 - `GET /api/ditto/collections/:id`
 - `POST /api/ditto/collections`
@@ -85,6 +87,7 @@ If successful, you'll see:
 - `DELETE /api/ditto/collections/:id`
 
 ### Mocks
+
 - `GET /api/ditto/mocks`
 - `GET /api/ditto/mocks/:id`
 - `POST /api/ditto/mocks`
@@ -92,6 +95,7 @@ If successful, you'll see:
 - `DELETE /api/ditto/mocks/:id`
 
 ### Request Logs
+
 - `GET /api/ditto/request-response`
 - `DELETE /api/ditto/request-response/:id`
 
@@ -122,6 +126,7 @@ Ditto/
     ├── 002_create_mocks.sql
     └── 003_create_request_response.sql
 ```
+
 ---
 
 ## 💖 Sponsor Ditto
@@ -141,12 +146,10 @@ Please drop us a quick note at **info@baraklabs.com**
 
 _– Team BarakLabs 💚_
 
-
 ### Support us via:
 
 [![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-000?style=for-the-badge&logo=github)](https://github.com/sponsors/baraklabs)
 
 ---
-
 
 [![Made in India](https://img.shields.io/badge/Made%20with%20❤️%20in-India-orange?style=for-the-badge)](https://baraklabs.com)

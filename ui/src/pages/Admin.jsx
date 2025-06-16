@@ -17,7 +17,7 @@ const Admin = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
+//submission page
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
